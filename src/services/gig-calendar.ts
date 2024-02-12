@@ -10,7 +10,7 @@ export type CalendarEvent = {
 };
 
 export async function getCalendarEvents(): Promise<CalendarEvent[]> {
-  const response = await fetch(gigCalendarUrl, { next: { revalidate: 60 } });
+  const response = await fetch(gigCalendarUrl, { cache: 'no-store' });
   const text = await response.text();
   const events = text.split(/\r?\n/).map((line) => {
     const [id, start, end, summary, location] = line.split(/\t/);
