@@ -13,7 +13,6 @@ const nextConfig = withMDX({
 
 module.exports = nextConfig;
 
-
 // Injected content via Sentry wizard below
 
 const { withSentryConfig } = require("@sentry/nextjs");
@@ -27,7 +26,7 @@ module.exports = withSentryConfig(
     // Suppresses source map uploading logs during build
     silent: true,
     org: "joe-maffei",
-    project: "javascript-nextjs",
+    project: "joemaffei-com",
   },
   {
     // For all available options, see:
