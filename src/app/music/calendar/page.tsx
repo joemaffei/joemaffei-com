@@ -1,4 +1,4 @@
-import Calendar from "@/components/Calendar";
+import CalendarPageContent from "@/components/CalendarPageContent";
 import { CalendarEvent, getCalendarEvents } from "@/services/gig-calendar";
 
 export default async function CalendarPage() {
@@ -9,13 +9,5 @@ export default async function CalendarPage() {
     eventMap.set(event.id, event);
   }
 
-  return (
-    <div>
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold">Calendar</h1>
-        <div></div>
-      </header>
-      <Calendar events={events} eventMap={eventMap} />
-    </div>
-  );
+  return <CalendarPageContent events={events} eventMap={eventMap} />;
 }

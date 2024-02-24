@@ -4,12 +4,14 @@ export default async function Home() {
   return (
     <main className="w-screen h-screen grid place-items-center">
       <div className="flex flex-col items-center gap-y-8">
-        <h1 className="text-5xl font-bold text-slate-200">Hi! I&apos;m Joe.</h1>
+        <h1 className="text-5xl font-bold text-slate-700 dark:text-slate-200">
+          Hi! I&apos;m Joe.
+        </h1>
         <nav className="flex gap-x-4 text-xl">
           <a href="https://joemaffei.dev">developer</a>
-          <span className="text-slate-500">&bull;</span>
+          <span className="text-slate-300 dark:text-slate-500">&bull;</span>
           <Link href="/music">musician</Link>
-          <span className="text-slate-500">&bull;</span>
+          <span className="text-slate-300 dark:text-slate-500">&bull;</span>
           <a href="https://www.instagram.com/joemaffei">foodie</a>
         </nav>
         <address className="not-italic flex gap-x-4 text-sm">

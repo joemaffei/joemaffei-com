@@ -9,8 +9,14 @@ export type CalendarEvent = {
   location: string;
 };
 
+const ONE_HOUR_IN_SECONDS = 3600;
+
 export async function getCalendarEvents(): Promise<CalendarEvent[]> {
-  const response = await fetch(gigCalendarUrl, { cache: 'no-store' });
+  let fetchOptions: RequestInit = { cache: "no-store" };
+  if (process.env.NODE_ENV === "production") {
+    fetchOptions = { next: { revalidate: ONE_HOUR_IN_SECONDS } };
+  }
+  const response = await fetch(gigCalendarUrl, fetchOptions);
   const text = await response.text();
   const events = text.split(/\r?\n/).map((line) => {
     const [id, start, end, summary, location] = line.split(/\t/);
