@@ -1,6 +1,10 @@
-const withMDX = require("@next/mdx")({ extension: /\.mdx?$/ });
+import nextMdx from "@next/mdx";
+import { withSentryConfig } from "@sentry/nextjs";
+import "./src/env.mjs";
 
-const nextConfig = withMDX({
+const withMdx = nextMdx({ extension: /\.mdx?$/ });
+
+const nextConfig = withMdx({
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   redirects: async () => [
     {
@@ -11,14 +15,8 @@ const nextConfig = withMDX({
   ],
 });
 
-module.exports = nextConfig;
-
-// Injected content via Sentry wizard below
-
-const { withSentryConfig } = require("@sentry/nextjs");
-
-module.exports = withSentryConfig(
-  module.exports,
+export default withSentryConfig(
+  nextConfig,
   {
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options
@@ -36,7 +34,7 @@ module.exports = withSentryConfig(
     widenClientFileUpload: true,
 
     // Transpiles SDK to be compatible with IE11 (increases bundle size)
-    transpileClientSDK: true,
+    transpileClientSDK: false,
 
     // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
     tunnelRoute: "/monitoring",
