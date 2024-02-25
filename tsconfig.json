@@ -22,11 +22,13 @@
     }
   },
   "include": [
-    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.mjs",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "src/services/gig-calendar.ts"
+    "next-env.d.ts"
   ],
   "exclude": ["node_modules"]
 }
