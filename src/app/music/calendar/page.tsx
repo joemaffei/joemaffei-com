@@ -3,6 +3,8 @@ import { getCalendarEvents } from "@/services/gig-calendar";
 import { calendar_v3 } from "googleapis";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 export default async function CalendarPage() {
   const events = await getCalendarEvents();
 
