@@ -2,21 +2,19 @@
 
 import CalendarGrid from "@/components/CalendarGrid";
 import CalendarList from "@/components/CalendarList";
-// import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { CalendarEvent } from "@/services/gig-calendar";
-// import { useLocalStorage } from "@uidotdev/usehooks";
+import { calendar_v3 } from "googleapis";
 import { Grid3X3, List } from "lucide-react";
-import { HTMLAttributes } from "react";
-import { useLocalStorage } from "usehooks-ts";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { HTMLAttributes, useEffect } from "react";
 
 type CalendarPageContentProps = HTMLAttributes<HTMLDivElement> & {
-  events: CalendarEvent[];
-  eventMap: Map<string, CalendarEvent>;
+  events: calendar_v3.Schema$Event[];
+  eventMap: Map<string, calendar_v3.Schema$Event>;
 };
 
 type CalendarMode = "grid" | "list";
 
-const ONE_DAY_IN_MILLIS = 86_400_000;
+// const ONE_DAY_IN_MILLIS = 86_400_000;
 
 const buttonClasses =
   "flex gap-x-2 items-center px-2 py-1 text-sm rounded aria-selected:bg-white text-black";
@@ -25,26 +23,37 @@ export default function CalendarPageContent({
   events,
   eventMap,
 }: CalendarPageContentProps) {
-  const [calendarMode, setCalendarMode] = useLocalStorage<CalendarMode>(
-    "calendarMode",
-    "grid",
-    /**
-     * initializeWithValue must be set to false in an SSR context.
-     *
-     * @see https://medium.com/@lean1190/uselocalstorage-hook-for-next-js-typed-and-ssr-friendly-4ddd178676df
-     * @see https://usehooks-ts.com/react-hook/use-local-storage
-     */
-    { initializeWithValue: false }
-  );
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const calendarMode = searchParams.get("mode");
 
-  const today = new Date().getTime();
-  const yesterday = today - ONE_DAY_IN_MILLIS;
-  const oneYearFromNow = today + ONE_DAY_IN_MILLIS * 365;
+  useEffect(() => {
+    // default the mode to grid
+    if (!searchParams.get("mode")) {
+      updateSearchParam("mode", "grid");
+    }
+  }, []);
 
-  const listEvents = events.filter((event) => {
-    const eventStart = new Date(event.start).getTime();
-    return eventStart >= yesterday && eventStart < oneYearFromNow;
-  });
+  // TODO: refactor this AI-generated crap
+  const updateSearchParam = (name: string, value: string) => {
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+
+    if (value !== undefined) {
+      current.set(name, value);
+    } else {
+      current.delete(name);
+    }
+
+    const search = current.toString();
+    const query = search ? `?${search}` : "";
+
+    router.replace(`${pathname}${query}`);
+  };
+
+  const setCalendarMode = (mode: "grid" | "list") => {
+    updateSearchParam("mode", mode);
+  };
 
   return (
     <div>
@@ -80,7 +89,7 @@ export default function CalendarPageContent({
         <CalendarGrid id="calendar-grid" events={events} eventMap={eventMap} />
       )}
       {calendarMode === "list" && (
-        <CalendarList id="calendar-list" events={listEvents} />
+        <CalendarList id="calendar-list" events={events} />
       )}
     </div>
   );

@@ -1,18 +1,18 @@
 "use client";
 
-import { CalendarEvent } from "@/services/gig-calendar";
 import { format } from "date-fns";
+import { calendar_v3 } from "googleapis";
 
 type CalendarEventTableProps = {
-  event: CalendarEvent;
+  event: calendar_v3.Schema$Event;
 };
 
 export default function CalendarEventTable({ event }: CalendarEventTableProps) {
   // const encodedLocation = encodeURIComponent(event.location);
   // const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedLocation}`;
 
-  const starts = format(new Date(event.start), "PPpp");
-  const ends = format(new Date(event.end), "PPpp");
+  const starts = format(new Date(event.start!.dateTime!), "PPpp");
+  const ends = format(new Date(event.end!.dateTime!), "PPpp");
 
   return (
     <table className="grid grid-cols-[min-content_1fr] gap-x-2 gap-y-2 mb-4">

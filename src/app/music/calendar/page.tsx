@@ -1,13 +1,19 @@
 import CalendarPageContent from "@/components/CalendarPageContent";
-import { CalendarEvent, getCalendarEvents } from "@/services/gig-calendar";
+import { getCalendarEvents } from "@/services/gig-calendar";
+import { calendar_v3 } from "googleapis";
+import { Suspense } from "react";
 
 export default async function CalendarPage() {
   const events = await getCalendarEvents();
 
-  const eventMap = new Map<string, CalendarEvent>();
+  const eventMap = new Map<string, calendar_v3.Schema$Event>();
   for (const event of events) {
-    eventMap.set(event.id, event);
+    eventMap.set(event.id!, event);
   }
 
-  return <CalendarPageContent events={events} eventMap={eventMap} />;
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <CalendarPageContent events={events} eventMap={eventMap} />
+    </Suspense>
+  );
 }

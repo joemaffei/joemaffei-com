@@ -16,19 +16,21 @@ export default async function CalendarEventPage({
     return <div>Event not found.</div>;
   }
 
-  const encodedLocation = encodeURIComponent(event.location);
-
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-4">{event.summary}</h1>
       <CalendarEventTable event={event} />
-      <iframe
-        width="800"
-        height="600"
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-        src={`https://www.google.com/maps/embed/v1/place?key=${process.env.GOOGLE_MAPS_API_KEY}&q=${encodedLocation}`}
-      />
+      {event.location && (
+        <iframe
+          width="800"
+          height="600"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          src={`https://www.google.com/maps/embed/v1/place?key=${
+            process.env.GOOGLE_API_KEY
+          }&q=${encodeURIComponent(event.location || "")}`}
+        />
+      )}
     </div>
   );
 }

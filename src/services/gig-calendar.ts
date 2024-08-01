@@ -1,39 +1,60 @@
-const gigCalendarUrl =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTXit08rtAM1JP-fScKAXow8VwgXRbGh6_ecF9-mA_uX3u0Icq1-kaW4qpzboTjxwYeMyy19kYJmCPD/pub?gid=0&single=true&output=tsv";
+import { calendar_v3, google } from "googleapis";
 
-export type CalendarEvent = {
-  id: string;
-  start: string;
-  end: string;
-  summary: string;
-  location: string;
-};
+export async function getCalendarEvents(): Promise<calendar_v3.Schema$Event[]> {
+  const serviceAccountBase64 = process.env.GOOGLE_SERVICE_ACCOUNT!;
+  const serviceAccountDecoded = atob(serviceAccountBase64);
+  const serviceAccount = JSON.parse(serviceAccountDecoded);
 
-// const ONE_HOUR_IN_SECONDS = 3600;
-
-export async function getCalendarEvents(): Promise<CalendarEvent[]> {
-  let fetchOptions: RequestInit = { cache: "no-store" };
-  // if (process.env.NODE_ENV === "production") {
-  //   fetchOptions = { next: { revalidate: ONE_HOUR_IN_SECONDS } };
-  // }
-  const response = await fetch(gigCalendarUrl, fetchOptions);
-  const text = await response.text();
-  const events = text.split(/\r?\n/).map((line) => {
-    const [id, start, end, summary, location] = line.split(/\t/);
-    return {
-      id,
-      start,
-      end,
-      summary,
-      location,
-    };
+  const auth = new google.auth.JWT({
+    email: serviceAccount.client_email,
+    key: serviceAccount.private_key,
+    scopes: ["https://www.googleapis.com/auth/calendar.readonly"],
   });
-  return events;
+
+  const calendar = google.calendar({ version: "v3", auth });
+
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+  const oneYearFromToday = new Date();
+  oneYearFromToday.setFullYear(oneYearAgo.getFullYear() + 2);
+
+  const eventsListResponse = await calendar.events.list({
+    calendarId: process.env.GOOGLE_CALENDAR_ID,
+    timeMin: oneYearAgo.toISOString(),
+    timeMax: oneYearFromToday.toISOString(),
+    singleEvents: true,
+    orderBy: "startTime",
+    maxResults: 2500,
+  });
+
+  return (eventsListResponse.data.items || []).map((item) => {
+    // account for all-day events
+    if (item.start?.date) {
+      const startDateTime = new Date(item.start.date);
+      startDateTime.setHours(0);
+      startDateTime.setMinutes(0);
+      const endDateTime = new Date(item.start.date);
+      endDateTime.setHours(23);
+      endDateTime.setMinutes(59);
+      return {
+        ...item,
+        start: {
+          dateTime: startDateTime.toISOString(),
+        },
+        end: {
+          dateTime: endDateTime.toISOString(),
+        },
+      };
+    }
+    return item;
+  });
 }
 
 export async function getCalendarEventById(
   id: string
-): Promise<CalendarEvent | undefined> {
+): Promise<calendar_v3.Schema$Event | undefined> {
+  // TODO: use google api to fetch only one event
   const events = await getCalendarEvents();
   const event = events.find((event) => event.id === id);
   return event;

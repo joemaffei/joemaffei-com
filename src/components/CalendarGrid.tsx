@@ -1,14 +1,14 @@
 "use client";
 
-import { CalendarEvent } from "@/services/gig-calendar";
+import { calendar_v3 } from "googleapis";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { HTMLAttributes } from "react";
 import useCalendar from "react-use-calendar";
 
 type CalendarGridProps = HTMLAttributes<HTMLDivElement> & {
-  events: CalendarEvent[];
-  eventMap: Map<string, CalendarEvent>;
+  events: calendar_v3.Schema$Event[];
+  eventMap: Map<string, calendar_v3.Schema$Event>;
 };
 
 const months = [
@@ -33,9 +33,9 @@ export default function CalendarGrid({
 }: CalendarGridProps) {
   const [state, actions] = useCalendar(new Date(), {
     events: events.map((event) => ({
-      startDate: new Date(event.start),
-      endDate: new Date(event.end),
-      note: event.id,
+      startDate: new Date(event.start?.dateTime!),
+      endDate: new Date(event.end?.dateTime!),
+      note: event.id!,
     })),
   });
 
