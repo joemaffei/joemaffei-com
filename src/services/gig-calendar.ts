@@ -17,7 +17,7 @@ export async function getCalendarEvents(): Promise<calendar_v3.Schema$Event[]> {
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
   const oneYearFromToday = new Date();
-  oneYearFromToday.setFullYear(oneYearAgo.getFullYear() + 2);
+  oneYearFromToday.setFullYear(oneYearFromToday.getFullYear() + 1);
 
   const eventsListResponse = await calendar.events.list({
     calendarId: process.env.GOOGLE_CALENDAR_ID,

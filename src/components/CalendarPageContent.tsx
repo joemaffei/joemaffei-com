@@ -28,6 +28,15 @@ export default function CalendarPageContent({
   const searchParams = useSearchParams();
   const calendarMode = searchParams.get("mode");
 
+  // Filter events for list mode to only show future events
+  const listEvents = events.filter(event => {
+    if (!event.start?.dateTime) return false;
+    const eventDate = new Date(event.start.dateTime);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Start of today
+    return eventDate >= today;
+  });
+
   useEffect(() => {
     // default the mode to grid
     if (!searchParams.get("mode")) {
@@ -89,7 +98,7 @@ export default function CalendarPageContent({
         <CalendarGrid id="calendar-grid" events={events} eventMap={eventMap} />
       )}
       {calendarMode === "list" && (
-        <CalendarList id="calendar-list" events={events} />
+        <CalendarList id="calendar-list" events={listEvents} />
       )}
     </div>
   );
