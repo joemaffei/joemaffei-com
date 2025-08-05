@@ -3,7 +3,7 @@
 import CalendarGrid from "@/components/CalendarGrid";
 import CalendarList from "@/components/CalendarList";
 import { calendar_v3 } from "googleapis";
-import { Grid3X3, List } from "lucide-react";
+import { ChevronLeft, ChevronRight, Grid3X3, List } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { HTMLAttributes, useEffect } from "react";
 
@@ -27,14 +27,24 @@ export default function CalendarPageContent({
   const router = useRouter();
   const searchParams = useSearchParams();
   const calendarMode = searchParams.get("mode");
+  const yearParam = searchParams.get("year");
+  const currentYear = new Date().getFullYear();
+  const selectedYear = yearParam ? parseInt(yearParam, 10) : null;
 
-  // Filter events for list mode to only show future events
+  // Filter events for list mode
   const listEvents = events.filter(event => {
     if (!event.start?.dateTime) return false;
     const eventDate = new Date(event.start.dateTime);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Start of today
-    return eventDate >= today;
+    
+    if (selectedYear) {
+      // Show all events for the selected year
+      return eventDate.getFullYear() === selectedYear;
+    } else {
+      // Show only future events (default behavior)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Start of today
+      return eventDate >= today;
+    }
   });
 
   useEffect(() => {
@@ -48,7 +58,7 @@ export default function CalendarPageContent({
   const updateSearchParam = (name: string, value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
 
-    if (value !== undefined) {
+    if (value !== undefined && value !== "") {
       current.set(name, value);
     } else {
       current.delete(name);
@@ -62,6 +72,14 @@ export default function CalendarPageContent({
 
   const setCalendarMode = (mode: "grid" | "list") => {
     updateSearchParam("mode", mode);
+  };
+
+  const setYear = (year: number | null) => {
+    if (year === null) {
+      updateSearchParam("year", "");
+    } else {
+      updateSearchParam("year", year.toString());
+    }
   };
 
   return (
@@ -98,7 +116,49 @@ export default function CalendarPageContent({
         <CalendarGrid id="calendar-grid" events={events} eventMap={eventMap} />
       )}
       {calendarMode === "list" && (
-        <CalendarList id="calendar-list" events={listEvents} />
+        <>
+          <div className="grid grid-cols-[20%_60%_20%] mb-8">
+            <div className="flex justify-start">
+              <button
+                className="flex items-center text-sm text-orange-600 dark:text-orange-500"
+                onClick={() => {
+                  if (selectedYear) {
+                    setYear(selectedYear - 1);
+                  } else {
+                    setYear(currentYear);
+                  }
+                }}
+              >
+                <ChevronLeft />
+                {selectedYear ? (selectedYear - 1).toString() : currentYear.toString()}
+              </button>
+            </div>
+            <h2 className="text-center text-xl font-semibold dark:text-slate-100">
+              {selectedYear ? selectedYear.toString() : "Upcoming Events"}
+            </h2>
+            <div className="flex justify-end">
+              <button
+                className="flex items-center text-sm text-orange-600 dark:text-orange-500"
+                onClick={() => {
+                  if (selectedYear) {
+                    if (selectedYear === currentYear) {
+                      setYear(null); // Go back to "Present" view
+                    } else {
+                      setYear(selectedYear + 1);
+                    }
+                  }
+                }}
+              >
+                {selectedYear 
+                  ? (selectedYear === currentYear ? "Present" : (selectedYear + 1).toString())
+                  : ""
+                }
+                {selectedYear && <ChevronRight />}
+              </button>
+            </div>
+          </div>
+          <CalendarList id="calendar-list" events={listEvents} />
+        </>
       )}
     </div>
   );
