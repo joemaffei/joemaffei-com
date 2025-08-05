@@ -19,3 +19,5 @@ export default async function CalendarPage() {
     </Suspense>
   );
 }
+
+export const runtime = "edge";
