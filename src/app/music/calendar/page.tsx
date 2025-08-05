@@ -6,10 +6,11 @@ import { Suspense } from "react";
 export const dynamic = "force-dynamic";
 
 type CalendarPageProps = {
-  searchParams: { year?: string; mode?: string };
+  searchParams: Promise<{ year?: string; mode?: string }>;
 };
 
-export default async function CalendarPage({ searchParams }: CalendarPageProps) {
+export default async function CalendarPage(props: CalendarPageProps) {
+  const searchParams = await props.searchParams;
   const yearParam = searchParams.year;
   const selectedYear = yearParam ? parseInt(yearParam, 10) : null;
 
