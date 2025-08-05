@@ -5,7 +5,7 @@ import CalendarList from "@/components/CalendarList";
 import { calendar_v3 } from "googleapis";
 import { ChevronLeft, ChevronRight, Grid3X3, List } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { HTMLAttributes, useEffect } from "react";
+import { HTMLAttributes, useCallback, useEffect } from "react";
 
 type CalendarPageContentProps = HTMLAttributes<HTMLDivElement> & {
   events: calendar_v3.Schema$Event[];
@@ -51,15 +51,8 @@ export default function CalendarPageContent({
     }
   });
 
-  useEffect(() => {
-    // default the mode to grid
-    if (!searchParams.get("mode")) {
-      updateSearchParam("mode", "grid");
-    }
-  }, []);
-
   // TODO: refactor this AI-generated crap
-  const updateSearchParam = (name: string, value: string) => {
+  const updateSearchParam = useCallback((name: string, value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
 
     if (value !== undefined && value !== "") {
@@ -72,7 +65,14 @@ export default function CalendarPageContent({
     const query = search ? `?${search}` : "";
 
     router.replace(`${pathname}${query}`);
-  };
+  }, [searchParams, router, pathname]);
+
+  useEffect(() => {
+    // default the mode to grid
+    if (!searchParams.get("mode")) {
+      updateSearchParam("mode", "grid");
+    }
+  }, [searchParams, updateSearchParam]);
 
   const setCalendarMode = (mode: "grid" | "list") => {
     updateSearchParam("mode", mode);
