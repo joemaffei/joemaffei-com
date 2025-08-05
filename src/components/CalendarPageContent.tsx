@@ -32,18 +32,22 @@ export default function CalendarPageContent({
   const selectedYear = yearParam ? parseInt(yearParam, 10) : null;
 
   // Filter events for list mode
-  const listEvents = events.filter(event => {
+  const listEvents = events.filter((event) => {
     if (!event.start?.dateTime) return false;
     const eventDate = new Date(event.start.dateTime);
-    
+
     if (selectedYear) {
       // Show all events for the selected year
       return eventDate.getFullYear() === selectedYear;
     } else {
-      // Show only future events (default behavior)
+      // Show events for the next 12 months (Present view)
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Start of today
-      return eventDate >= today;
+
+      const twelveMonthsFromNow = new Date(today);
+      twelveMonthsFromNow.setFullYear(today.getFullYear() + 1);
+
+      return eventDate >= today && eventDate < twelveMonthsFromNow;
     }
   });
 
@@ -84,7 +88,7 @@ export default function CalendarPageContent({
 
   return (
     <div>
-      <header className="mb-8 flex gap-x-8 items-center">
+      <header className="mb-4 flex gap-x-8 items-center">
         <h1 className="text-2xl font-bold">Calendar</h1>
         <div
           role="tablist"
@@ -117,8 +121,21 @@ export default function CalendarPageContent({
       )}
       {calendarMode === "list" && (
         <>
-          <div className="grid grid-cols-[20%_60%_20%] mb-8">
-            <div className="flex justify-start">
+          <div className="mb-8">
+            <div
+              className={`flex justify-center mb-4 ${
+                selectedYear ? "visible" : "invisible"
+              }`}
+            >
+              <button
+                className="text-sm text-orange-600 dark:text-orange-500 font-medium"
+                onClick={() => setYear(null)}
+              >
+                Present
+              </button>
+            </div>
+
+            <div className="flex justify-between items-center">
               <button
                 className="flex items-center text-sm text-orange-600 dark:text-orange-500"
                 onClick={() => {
@@ -130,34 +147,40 @@ export default function CalendarPageContent({
                 }}
               >
                 <ChevronLeft />
-                {selectedYear ? (selectedYear - 1).toString() : currentYear.toString()}
+                {selectedYear
+                  ? (selectedYear - 1).toString()
+                  : currentYear.toString()}
               </button>
-            </div>
-            <h2 className="text-center text-xl font-semibold dark:text-slate-100">
-              {selectedYear ? selectedYear.toString() : "Upcoming Events"}
-            </h2>
-            <div className="flex justify-end">
+
+              <h2 className="text-center text-xl font-semibold dark:text-slate-100">
+                {selectedYear ? selectedYear.toString() : "Upcoming Events"}
+              </h2>
+
               <button
                 className="flex items-center text-sm text-orange-600 dark:text-orange-500"
                 onClick={() => {
                   if (selectedYear) {
-                    if (selectedYear === currentYear) {
-                      setYear(null); // Go back to "Present" view
-                    } else {
-                      setYear(selectedYear + 1);
-                    }
+                    setYear(selectedYear + 1);
+                  } else {
+                    setYear(currentYear + 1);
                   }
                 }}
               >
-                {selectedYear 
-                  ? (selectedYear === currentYear ? "Present" : (selectedYear + 1).toString())
-                  : ""
-                }
-                {selectedYear && <ChevronRight />}
+                {selectedYear
+                  ? (selectedYear + 1).toString()
+                  : (currentYear + 1).toString()}
+                <ChevronRight />
               </button>
             </div>
           </div>
-          <CalendarList id="calendar-list" events={listEvents} />
+
+          {listEvents.length > 0 ? (
+            <CalendarList id="calendar-list" events={listEvents} />
+          ) : (
+            <div className="text-center text-gray-600 dark:text-gray-400 py-8">
+              No calendar dates to display
+            </div>
+          )}
         </>
       )}
     </div>
