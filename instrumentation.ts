@@ -1,7 +1,8 @@
+import * as Sentry from "@sentry/nextjs";
+
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     // Server-side Sentry initialization
-    const Sentry = await import("@sentry/nextjs");
 
     Sentry.init({
       enabled: process.env.SENTRY_ENABLED !== "false",
@@ -13,7 +14,6 @@ export async function register() {
 
   if (process.env.NEXT_RUNTIME === "edge") {
     // Edge runtime Sentry initialization
-    const Sentry = await import("@sentry/nextjs");
 
     Sentry.init({
       enabled: process.env.SENTRY_ENABLED !== "false",
@@ -23,3 +23,6 @@ export async function register() {
     });
   }
 }
+
+// Export request error hook for error instrumentation
+export const onRequestError = Sentry.captureRequestError;
