@@ -18,8 +18,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1(@types/react@19.1.9)(react@19.1.1)
       '@next/mdx':
-        specifier: ^15.5.19
-        version: 15.5.19(@mdx-js/loader@3.0.1(webpack@5.90.1(postcss@8.4.40)))(@mdx-js/react@3.0.1(@types/react@19.1.9)(react@19.1.1))
+        specifier: ^16.2.7
+        version: 16.2.7(@mdx-js/loader@3.0.1(webpack@5.90.1(postcss@8.4.40)))(@mdx-js/react@3.0.1(@types/react@19.1.9)(react@19.1.1))
       '@sentry/nextjs':
         specifier: ^10.56.0
         version: 10.56.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.2.7(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(webpack@5.90.1(postcss@8.4.40))
@@ -443,8 +443,8 @@ packages:
   '@next/eslint-plugin-next@15.5.19':
     resolution: {integrity: sha512-Ctwb4qYuMbHN/1oXLlTdMchwG8h8Xzwq+wGZZMgF3o6+uwyBKAI2c96bdOsl+C62PaUD0Jkh+QpNkhUeDlam0Q==}
 
-  '@next/mdx@15.5.19':
-    resolution: {integrity: sha512-W9eYr4l+qkWlOv7ZOLJTNp1SLtX4iYkUVSBWox6svcfRkLDMHhquvCUjN7kCJ2EaxKtJf4t/+pZDoNGUsd1HTw==}
+  '@next/mdx@16.2.7':
+    resolution: {integrity: sha512-4RmM0KISxvfHr37/cn9TAGD2oy1nvTQ+ycgknz2xpd8IrY980N7XDU3CXhfKOXPhIVgbshxFF9HQEQC32ZVa9A==}
     peerDependencies:
       '@mdx-js/loader': '>=0.15.0'
       '@mdx-js/react': '>=0.15.0'
@@ -3362,6 +3362,10 @@ packages:
     resolution: {integrity: sha512-l3BikUxvPOcn5E74dZiq5BGsTb5yEwhaTSzccU6t4sDOH8NWJCstKO5QT2CvtFoK6F0saL7p9xHAqHOlCPJygA==}
     engines: {node: '>= 8'}
 
+  source-map@0.7.6:
+    resolution: {integrity: sha512-i5uvt8C3ikiWeNZSVZNWcfZPItFQOsYTUAOkcUPGd8DqDy1uOUikjt5dG+uRlwyvR108Fb9DOd4GvXfT0N2/uQ==}
+    engines: {node: '>= 12'}
+
   space-separated-tokens@2.0.2:
     resolution: {integrity: sha512-PEGlAwrG8yXGXRjW32fGbg66JAlOAwbObuqVoJpv/mRgoWDQfgH1wDPvtzWyUSNAXBGSk8h755YDbbcEy3SH2Q==}
 
@@ -4268,9 +4272,9 @@ snapshots:
     dependencies:
       fast-glob: 3.3.1
 
-  '@next/mdx@15.5.19(@mdx-js/loader@3.0.1(webpack@5.90.1(postcss@8.4.40)))(@mdx-js/react@3.0.1(@types/react@19.1.9)(react@19.1.1))':
+  '@next/mdx@16.2.7(@mdx-js/loader@3.0.1(webpack@5.90.1(postcss@8.4.40)))(@mdx-js/react@3.0.1(@types/react@19.1.9)(react@19.1.1))':
     dependencies:
-      source-map: 0.7.4
+      source-map: 0.7.6
     optionalDependencies:
       '@mdx-js/loader': 3.0.1(webpack@5.90.1(postcss@8.4.40))
       '@mdx-js/react': 3.0.1(@types/react@19.1.9)(react@19.1.1)
@@ -7714,6 +7718,8 @@ snapshots:
   source-map@0.6.1: {}
 
   source-map@0.7.4: {}
+
+  source-map@0.7.6: {}
 
   space-separated-tokens@2.0.2: {}
 
