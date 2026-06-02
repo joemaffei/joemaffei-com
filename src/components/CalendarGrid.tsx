@@ -1,5 +1,6 @@
 "use client";
 
+import { getNextMonthDate, getNextMonthLabel, getPrevMonthDate, getPrevMonthLabel } from "@/lib/calendar-nav";
 import { calendar_v3 } from "googleapis";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -10,21 +11,6 @@ type CalendarGridProps = HTMLAttributes<HTMLDivElement> & {
   events: calendar_v3.Schema$Event[];
   eventMap: Map<string, calendar_v3.Schema$Event>;
 };
-
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 
 export default function CalendarGrid({
   events,
@@ -39,13 +25,8 @@ export default function CalendarGrid({
     })),
   });
 
-  const firstDayOfTheActiveMonth = new Date(
-    `${state.year}-${(months.indexOf(state.month) + 1)
-      .toString()
-      .padStart(2, "0")}-01T00:00:00Z`
-  );
-  const previousMonthYear = getPrevMonthYear(firstDayOfTheActiveMonth);
-  const nextMonthYear = getNextMonthYear(firstDayOfTheActiveMonth);
+  const previousMonthYear = getPrevMonthLabel(state.year, state.month);
+  const nextMonthYear = getNextMonthLabel(state.year, state.month);
 
   return (
     <section className="w-full" {...rootProps}>
@@ -53,7 +34,7 @@ export default function CalendarGrid({
         <div className="flex justify-start">
           <button
             className="flex items-center text-sm text-orange-600 dark:text-orange-500"
-            onClick={() => actions.getPrevMonth()}
+            onClick={() => actions.setDate(getPrevMonthDate(state.year, state.month))}
           >
             <ChevronLeft />
             {previousMonthYear}
@@ -65,7 +46,7 @@ export default function CalendarGrid({
         <div className="flex justify-end">
           <button
             className="flex items-center text-sm text-orange-600 dark:text-orange-500"
-            onClick={() => actions.getNextMonth()}
+            onClick={() => actions.setDate(getNextMonthDate(state.year, state.month))}
           >
             {nextMonthYear}
             <ChevronRight />
@@ -129,20 +110,3 @@ export default function CalendarGrid({
     </section>
   );
 }
-
-const monthYearFormat = new Intl.DateTimeFormat("en-US", {
-  month: "long",
-  year: "numeric",
-});
-
-const getPrevMonthYear = (utcDate: Date | string) => {
-  const prevMonth = new Date(utcDate);
-  prevMonth.setMonth(prevMonth.getUTCMonth() - 1);
-  return monthYearFormat.format(prevMonth);
-};
-
-const getNextMonthYear = (utcDate: Date | string) => {
-  const nextMonth = new Date(utcDate);
-  nextMonth.setMonth(nextMonth.getUTCMonth() + 1);
-  return monthYearFormat.format(nextMonth);
-};
