@@ -95,7 +95,7 @@ export default function CalendarGrid({
                         <Link
                           key={index}
                           href={`/music/calendar/${event.note}`}
-                          className="inline-block w-full text-start text-sm bg-orange-400 dark:bg-orange-500/95 text-slate-900 dark:text-slate-900 px-1 rounded mb-1"
+                          className="inline-block w-full text-start text-sm bg-orange-400 dark:bg-orange-500/95 text-slate-900 dark:text-slate-900! px-1 rounded mb-1"
                         >
                           {fullEvent?.summary}
                         </Link>
