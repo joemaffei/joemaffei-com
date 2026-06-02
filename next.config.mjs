@@ -5,6 +5,9 @@ import "./src/env.mjs";
 const withMdx = nextMdx({ extension: /\.mdx?$/ });
 
 const nextConfig = withMdx({
+  turbopack: {
+    root: import.meta.dirname,
+  },
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   redirects: async () => [
     {
