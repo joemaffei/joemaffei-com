@@ -86,14 +86,15 @@ export default function CalendarGrid({
           </tr>
         </thead>
         <tbody className="contents">
-          {state.weeks.map((week, index) => (
+          {state.weeks.filter((week) => week.some((day) => day.isSameMonth)).map((week, index) => (
             <tr key={index} className="contents">
               {week.map((day) => (
                 <td
-                  key={day.dayOfMonth}
+                  key={day.dayOfYear}
                   className={[
                     "border-b dark:border-b-slate-800 px-1 min-h-24 overflow-clip text-ellipsis",
                     day.isToday ? "border-orange-500/20 bg-orange-500/10" : "",
+                    !day.isSameMonth && !day.isToday ? "bg-black/10 dark:bg-white/10" : "",
                   ].join(" ")}
                 >
                   {day.isToday && (
