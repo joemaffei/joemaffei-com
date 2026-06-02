@@ -31,12 +31,8 @@ export async function getCalendarEvents(): Promise<calendar_v3.Schema$Event[]> {
   return (eventsListResponse.data.items || []).map((item) => {
     // account for all-day events
     if (item.start?.date) {
-      const startDateTime = new Date(item.start.date);
-      startDateTime.setHours(0);
-      startDateTime.setMinutes(0);
-      const endDateTime = new Date(item.start.date);
-      endDateTime.setHours(23);
-      endDateTime.setMinutes(59);
+      const startDateTime = new Date(item.start.date + "T00:00:00");
+      const endDateTime = new Date(item.start.date + "T23:59:59");
       return {
         ...item,
         start: {
