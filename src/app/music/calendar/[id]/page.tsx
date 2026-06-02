@@ -2,14 +2,13 @@ import CalendarEventTable from "@/components/CalendarEventTable";
 import { getCalendarEventById } from "@/services/gig-calendar";
 
 type CalendarEventPageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
-export default async function CalendarEventPage({
-  params,
-}: CalendarEventPageProps) {
+export default async function CalendarEventPage(props: CalendarEventPageProps) {
+  const params = await props.params;
   const event = await getCalendarEventById(params.id);
 
   if (!event) {
