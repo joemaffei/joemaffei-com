@@ -2,12 +2,12 @@ import { calendar_v3, google } from "googleapis";
 
 export function normalizeCalendarEvent(item: calendar_v3.Schema$Event): calendar_v3.Schema$Event {
   if (item.start?.date) {
-    const startDateTime = new Date(item.start.date + "T00:00:00");
-    const endDateTime = new Date(item.start.date + "T23:59:59");
+    // Store without timezone suffix so new Date() always parses as local time,
+    // regardless of whether the code runs on a UTC server or the user's browser.
     return {
       ...item,
-      start: { dateTime: startDateTime.toISOString() },
-      end: { dateTime: endDateTime.toISOString() },
+      start: { dateTime: item.start.date + "T00:00:00" },
+      end: { dateTime: item.start.date + "T23:59:59" },
     };
   }
   return item;
