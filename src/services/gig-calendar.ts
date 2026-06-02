@@ -1,5 +1,18 @@
 import { calendar_v3, google } from "googleapis";
 
+export function normalizeCalendarEvent(item: calendar_v3.Schema$Event): calendar_v3.Schema$Event {
+  if (item.start?.date) {
+    const startDateTime = new Date(item.start.date + "T00:00:00");
+    const endDateTime = new Date(item.start.date + "T23:59:59");
+    return {
+      ...item,
+      start: { dateTime: startDateTime.toISOString() },
+      end: { dateTime: endDateTime.toISOString() },
+    };
+  }
+  return item;
+}
+
 export async function getCalendarEvents(): Promise<calendar_v3.Schema$Event[]> {
   const serviceAccountBase64 = process.env.GOOGLE_SERVICE_ACCOUNT!;
   const serviceAccountDecoded = atob(serviceAccountBase64);
@@ -28,23 +41,7 @@ export async function getCalendarEvents(): Promise<calendar_v3.Schema$Event[]> {
     maxResults: 2500,
   });
 
-  return (eventsListResponse.data.items || []).map((item) => {
-    // account for all-day events
-    if (item.start?.date) {
-      const startDateTime = new Date(item.start.date + "T00:00:00");
-      const endDateTime = new Date(item.start.date + "T23:59:59");
-      return {
-        ...item,
-        start: {
-          dateTime: startDateTime.toISOString(),
-        },
-        end: {
-          dateTime: endDateTime.toISOString(),
-        },
-      };
-    }
-    return item;
-  });
+  return (eventsListResponse.data.items || []).map(normalizeCalendarEvent);
 }
 
 export async function getCalendarEventsForYear(year: number): Promise<calendar_v3.Schema$Event[]> {
@@ -72,23 +69,7 @@ export async function getCalendarEventsForYear(year: number): Promise<calendar_v
     maxResults: 2500,
   });
 
-  return (eventsListResponse.data.items || []).map((item) => {
-    // account for all-day events
-    if (item.start?.date) {
-      const startDateTime = new Date(item.start.date + "T00:00:00");
-      const endDateTime = new Date(item.start.date + "T23:59:59");
-      return {
-        ...item,
-        start: {
-          dateTime: startDateTime.toISOString(),
-        },
-        end: {
-          dateTime: endDateTime.toISOString(),
-        },
-      };
-    }
-    return item;
-  });
+  return (eventsListResponse.data.items || []).map(normalizeCalendarEvent);
 }
 
 export async function getCalendarEventById(

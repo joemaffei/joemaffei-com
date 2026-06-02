@@ -1,6 +1,7 @@
 "use client";
 
 import { getNextMonthDate, getNextMonthLabel, getPrevMonthDate, getPrevMonthLabel } from "@/lib/calendar-nav";
+import { toCalendarDayEvent } from "@/lib/calendar-event-mapping";
 import { calendar_v3 } from "googleapis";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -18,11 +19,7 @@ export default function CalendarGrid({
   ...rootProps
 }: CalendarGridProps) {
   const [state, actions] = useCalendar(new Date(), {
-    events: events.map((event) => ({
-      startDate: new Date(event.start?.dateTime!),
-      endDate: new Date(event.end?.dateTime!),
-      note: event.id!,
-    })),
+    events: events.map(toCalendarDayEvent),
   });
 
   const previousMonthYear = getPrevMonthLabel(state.year, state.month);
