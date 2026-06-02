@@ -17,7 +17,7 @@ type CalendarMode = "grid" | "list";
 // const ONE_DAY_IN_MILLIS = 86_400_000;
 
 const buttonClasses =
-  "flex gap-x-2 items-center px-2 py-1 text-sm rounded aria-selected:bg-white text-black";
+  "flex gap-x-2 items-center px-2 py-1 text-sm rounded aria-selected:bg-white text-black dark:text-black";
 
 export default function CalendarPageContent({
   events,
